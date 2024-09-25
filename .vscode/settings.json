@@ -1,0 +1,7 @@
+{
+    "python.REPL.enableREPLSmartSend": false,
+    "python.envFile": "${workspaceFolder}/.env",
+    
+    // 여기에 경로 추가
+    "python.analysis.extraPaths": ["./K-Digital Training/MyModule"]
+}

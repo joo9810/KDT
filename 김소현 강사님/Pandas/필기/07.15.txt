@@ -1,0 +1,41 @@
+파이썬 => 일반 프로그래밍
+판다스 => 데이터 분석 프로그래밍
+          자료형 => Series, DataFrame
+          int64, float64, object <-- str, mix
+          datetime, category, datedelta
+          다양한 파일들 ===> DataFrame
+                        read_파일종류 : read_csv, read_excel, read_json ...
+
+Series/DataFrame ==> 구성 : index+values / index + column + values
+
+[행/열 인덱스 변경 방법]
+(1) 메서드 사용
+    renamed() : 부분 일부 변경
+index = [새로운 인덱스]
+(2) 속성 사용
+    index = [새로운 인덱스]
+    columns = [새로운 컬럼]
+
+[행/열 삭제 메서드]
+drop()
+* 행삭제 : axis = 0, 삭제하고 싶은 인덱스 지정
+         : index = 삭제하고 싶은 인덱스
+* 열삭제 : axis = 1, 삭제하고 싶은 인덱스 지정
+           columns = 삭제하고 싶은 인덱스
+* inplace = False
+
+[행/열 추가 메서드]
+* 행 추가 ==> loc[새로운 행] = 새로운 값
+                             => 1개 : 전부 동일한 값
+                             => 열의 수만큼 값
+* 열 추가 ==> [새로운 행] = 새로운 값
+                             => 1개 : 전부 동일한 값
+                             => 행의 수만큼 값
+
+[원소 선택/추가 메서드]
+* 열 선택 ==> 변수명[열인덱스]
+* 행 선택 ==> 변수명.loc[행인덱스] / 변수명.iloc[행인덱스]
+* 원소 선틱 ==> 변수명.loc[행 인덱스, 열 인덱스]
+                변수명.iloc[행 인덱스, 열 인덱스]
+                변수명.loc[행 인덱스][열 인덱스]
+                변수명.iloc[행 인덱스][열 인덱스]
