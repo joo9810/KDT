@@ -1,18 +1,14 @@
 import torch 
 import torch.nn as nn
 import torch.nn.functional as F 
-import torch.optim as optim
-from torch.utils.data import Dataset, DataLoader
-from torchmetrics.classification import F1Score
-from torchinfo import summary
+from torch.utils.data import Dataset
 from torchmetrics.regression import *
 from torchmetrics.classification import *
 from torchmetrics.functional.regression import r2_score
 from torchmetrics.functional.classification import f1_score
-
-import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import LabelEncoder
+import pandas as pd
+import numpy as np
 
 # ----------------------------------------------------
 # 클래스 목적 : 학습용 데이터셋 텐서화 및 전처리
@@ -23,13 +19,14 @@ from sklearn.preprocessing import LabelEncoder
 
 class CustomDataset(Dataset):
     # 데이터 로딩 및 전처리 진행과 인스턴스 생성 메서드
-    def __init__(self, featureDF, targetDF, feature_dim=1):
+    def __init__(self, feature, target, feature_dim=1):
         super().__init__()
-        self.featureDF = featureDF
-        self.targetDF = targetDF
-        self.n_rows = featureDF.shape[0]
-        self.n_features = featureDF.shape[1]
+        self.feature = feature
+        self.target = target
+        self.n_rows = feature.shape[0]
         self.feature_dim = feature_dim
+        if isinstance(feature, pd.DataFrame): # 입력이 데이터 프레임이라면
+            self.n_features = feature.shape[1]
 
     # 데이터의 개수 반환 메서드
     def __len__(self):
@@ -37,12 +34,20 @@ class CustomDataset(Dataset):
 
     # 특정 index의 데이터와 타겟 반환 메서드 => Tensor 반환!!!
     def __getitem__(self, idx): # 클래스 인스턴스 생성하면 자동으로 호출되는 콜백 메서드
-        if self.feature_dim == 1:
-            featureTS = torch.FloatTensor(self.featureDF.iloc[idx].values)
-        elif self.feature_dim == 2:
-            featureTS = torch.FloatTensor(self.featureDF.iloc[idx].values).unsqueeze(0)
-        targetTS = torch.FloatTensor(self.targetDF.iloc[idx].values)
-        return featureTS, targetTS
+        if isinstance(self.feature, pd.DataFrame):
+            if self.feature_dim == 1:
+                featureTS = torch.FloatTensor(self.feature.iloc[idx].values)
+            elif self.feature_dim == 2:
+                featureTS = torch.FloatTensor(self.feature.iloc[idx].values).unsqueeze(0)
+            targetTS = torch.FloatTensor(self.target.iloc[idx].values)
+            return featureTS, targetTS
+        elif isinstance(self.feature, np.ndarray):
+            if self.feature_dim == 1:
+                featureTS = torch.FloatTensor(self.feature[idx])
+            elif self.feature_dim == 2:
+                featureTS = torch.FloatTensor(self.feature[idx]).unsqueeze(0)
+            targetTS = torch.FloatTensor(self.target)[[idx]]
+            return featureTS, targetTS
 
 # -----------------------------------------------------------------
 # 사용자 정의 모델 클래스
@@ -133,6 +138,70 @@ class LSTMModel(nn.Module):
         elif self.model_type == 'multiclass':  # 다중 분류
             return self.output_layer(x)  # CrossEntropyLoss에서 log-softmax 처리
 
+
+class CNNModel(nn.Module):
+    def __init__(self, input_cnn1, output_cnn1, output_cnn2, hidden_list,
+                 output_classes ,kernel_size, padding1, padding2, dropout_prob,
+                 image_height_size, image_width_size):
+        super().__init__()
+
+        # 첫 번째 합성곱 계층 정의 (동적으로 입력 채널과 은닉 레이어 적용)
+        self.layer1 = nn.Sequential(
+            nn.Conv2d(in_channels=input_cnn1, out_channels=output_cnn1,
+                      kernel_size=kernel_size, padding=padding1),
+            nn.BatchNorm2d(output_cnn1), # 배치 정규화
+            nn.ReLU(), # 활성화 함수
+            nn.MaxPool2d(kernel_size=2, stride=2)
+        )
+
+        # 출력크기 = (입력크기 - 커널크기 + 2*패딩크기)//스트라이드크기 + 1
+        conv1_output_height = (image_height_size - kernel_size + 2 * padding1) // 2 + 1
+        conv1_output_width = (image_width_size - kernel_size + 2 * padding1) // 2 + 1
+
+        # 두 번째 합성곱 계층 정의
+        self.layer2 = nn.Sequential(
+            nn.Conv2d(in_channels=output_cnn1, out_channels=output_cnn2,
+                      kernel_size=kernel_size, padding=padding2),
+            nn.BatchNorm2d(output_cnn2),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2)
+        )
+
+        conv2_output_height = (conv1_output_height - kernel_size + 2*padding2) // 2 + 1
+        conv2_output_width = (conv1_output_width - kernel_size + 2*padding2) // 2 + 1
+
+        # 평탄화 후 전결합층의 입력 크기 계산
+        self.fc_input_size = output_cnn2 * conv2_output_height * conv2_output_width
+
+        # 전결합층 정의
+        self.drop = nn.Dropout(dropout_prob) # 드롭아웃 설정
+        self.fc1 = nn.Linear(in_features=self.fc_input_size, out_features=hidden_list[0])
+        self.fc2_list = nn.ModuleList()
+        for i in range(len(hidden_list)-1):
+            self.fc2_list.append(nn.Linear(hidden_list[i], hidden_list[i+1]))
+        self.fc3 = nn.Linear(in_features=hidden_list[-1], out_features=output_classes)
+
+    def forward(self, x):
+        # 합성곱 계층 통과
+        x = self.layer1(x)
+        x = self.layer2(x)
+
+        # 1D로 평탄화 (배치 크기, 채널 수, 높이, 너비) => (배치 크기, -1)
+        x = x.view(x.shape[0], -1)
+
+        # 드롭아웃 및 전결합층 통과
+        x = self.drop(x)
+
+        x = self.fc1(x)
+        x = F.relu(x)
+
+        for i in self.fc2_list:
+            x = i(x)
+            x = F.relu(x)
+
+        x = self.fc3(x)
+        return x
+        
 
 # -----------------------------------------------------------------
 ## 테스트/검증 함수 
