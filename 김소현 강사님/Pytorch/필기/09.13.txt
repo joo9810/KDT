@@ -1,0 +1,25 @@
+[IRIS] Regression
+Feature : 3개  Sepal_Length, Sepal_Width, Petal_Width
+Target : 1개  Petal_Length
+
+[IRIS] Binary Classification
+Feature : 4개
+Target : 1개
+Class : 품종 2개 <- Setosa와 나머지
+
+[IRIS] Multi Classification
+Feature : 4개
+Target : 1개
+Class : 품종 3개 <- 고유값
+
+------------------------------------------------------
+
+[MNIST-DIGIT] Multi Classification
+Feature : 64개
+Target : 1개
+Class 0~9 10개 <- 고유값
+
+[MNIST-FASHION]
+Feature : 784개
+Target : 1개
+Class 

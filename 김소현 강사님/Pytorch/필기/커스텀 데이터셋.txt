@@ -1,0 +1,7 @@
+train_test_split()
+train/test
+fit(train)
+-------------------
+(1) 데이터
+(2) Dataset 형태
+(3) 

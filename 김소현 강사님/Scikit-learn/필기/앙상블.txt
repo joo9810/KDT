@@ -1,0 +1,11 @@
+KNN
+Linear-model : LinearRegression => 다중(피쳐 많은 형태), 다항(곡선)
+                                => 과대적합 => 모델 직접 제어 즉, 규제 alpha 매개변수 0~강하게
+                                               릿지(영향력 낮은 피쳐의 coef_0에 가깝게)
+                                               라쏘(영향력 낮은 피쳐의 coef_0으로)
+                                => 분류 ==> 선형식 결과 ==> 확률값으로 => 로지스틱회귀
+                                            OvR/OvA : 2진 분류기를 여러개 => 5개
+                                            OvO : 2진 분류기를 여러개 => NC2
+Tree-model : DecisionTree (CART) => 회귀/분류 : 범주형/수치형
+            * 하이퍼 파라미터 많음
+Ensemble-model : Voting, Bagging -> RandomForestC/R
