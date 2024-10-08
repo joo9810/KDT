@@ -10,6 +10,9 @@ from PIL import Image
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+from collections import Counter
+from konlpy.tag import Okt
+import re
 
 # ----------------------------------------------------
 # 클래스 목적 : 학습용 데이터셋 텐서화 및 전처리
@@ -256,11 +259,13 @@ def testing(test_DataLoader, model, model_type, num_classes=None,
                 loss_test = F.mse_loss(pred_test_y, y_batch)
                 score_test = r2_score(pred_test_y, y_batch)
             elif model_type == 'binary': # 이진 분류일 때
-                loss_test = F.binary_cross_entropy(pred_test_y, y_batch)
-                score_test = f1_score(pred_test_y, y_batch, task='binary')
+                pred_test_y = torch.sigmoid(pred_test_y) # 확률값 출력
+                loss_test = F.binary_cross_entropy(pred_test_y, y_batch) # 확률값을 전달해야 함
+                pred_test_y = pred_test_y.round() # 확률값을 0또는 1로 변환
+                score_test = f1_score(pred_test_y, y_batch, task='binary') # 0또는 1로 변환된 값을 전달
             elif model_type == 'multiclass': # 다중 분류일 때
                 y_batch1D = y_batch.reshape(-1) # 다중 분류는 y가 반드시 1차원이어야 함.. (너무 불친절)
-                loss_test = F.cross_entropy(pred_test_y, y_batch1D.long())
+                loss_test = F.cross_entropy(pred_test_y, y_batch1D.long()) 
                 pred_test_labels = torch.argmax(pred_test_y, dim=1)
                 # dim=1을 해야 한 행 내에서 가장 큰 원소의 인덱스를 가져옴
                 score_test = f1_score(pred_test_labels, y_batch1D,
@@ -307,8 +312,10 @@ def training(train_DataLoader, test_DataLoader, model, model_type, optimizer,
                 loss_train = F.mse_loss(pred_train_y, y_batch)
                 score_train = r2_score(pred_train_y, y_batch)
             elif model_type == 'binary': # 이진 분류일 때
-                loss_train = F.binary_cross_entropy(pred_train_y, y_batch)
-                score_train = f1_score(pred_train_y, y_batch, task='binary')
+                pred_train_y = torch.sigmoid(pred_train_y) # 확률값 출력
+                loss_train = F.binary_cross_entropy(pred_train_y, y_batch) # 확률값을 전달해야 함
+                pred_train_y = pred_train_y.round() # 확률값을 0또는 1로 변환
+                score_train = f1_score(pred_train_y, y_batch, task='binary') # 0또는 1로 변환된 값을 전달
             elif model_type == 'multiclass': # 다중 분류일 때
                 y_batch1D = y_batch.reshape(-1) # 다중 분류는 y가 반드시 1차원이어야 함.. (너무 불친절)
                 loss_train = F.cross_entropy(pred_train_y, y_batch1D.long())
@@ -408,3 +415,162 @@ def predict_value(test_inputDF, model, dim):
     elif dim == 3:
         test_inputTS = torch.FloatTensor(test_inputDF.values).reshape(1,1,-1)
         return torch.argmax(model(test_inputTS), dim=1)
+
+# -----------------------------------------------------------------
+# 자연어 분석 관련 클래스 및 함수
+# -----------------------------------------------------------------
+# 불용어 제거 함수
+def remove_stopwords(tokens, stopwords):
+    return [token for token in tokens if token not in stopwords]
+
+# 구두점 제거 함수
+def remove_punctuation(tokens):
+    # match는 문장의 처음부터 매칭돼야 함
+    return [token for token in tokens if re.match(r'[\w가-힇]+', token)]
+
+# 텍스트를 순차적으로 처리하는 제너레이터
+def text_generator(texts):
+    for text in texts:
+        yield text
+
+# 단어사전 만드는 함수
+def build_voca(texts, stopwords='stopword.txt', tokenizer=Okt().morphs):
+    with open(stopwords, 'r', encoding='utf-8') as f:
+        stopwords = f.read().splitlines()
+
+    counter = Counter()
+
+    # 제너레이터를 사용하여 각 텍스트 처리
+    for text in text_generator(texts):
+        tokens = tokenizer(text)
+
+        # 불용어 및 구두점 제거
+        clean_tokens = remove_stopwords(tokens, stopwords)
+        clean_tokens = remove_punctuation(clean_tokens)
+
+        counter.update(clean_tokens)
+
+    vocab = {'<PAD>' : 0, '<UNK>' : 1}
+    vocab.update({word : idx+2 for idx, (word, freq) in enumerate(counter.items())})
+
+    return vocab
+
+
+# 토큰화한 단어를 숫자 텐서로 만들어주는 함수
+def make_tensor_token(texts, voca, stopwords='stopword.txt'):
+    tensor_list = []
+
+    with open(stopwords, 'r', encoding='utf-8') as f:
+        stopwords = f.read().splitlines()
+
+    for text in text_generator(texts):
+        tokens = Okt().morphs(text)
+
+        # 불용어 및 구두점 제거
+        clean_tokens = remove_stopwords(tokens, stopwords)
+        clean_tokens = remove_punctuation(clean_tokens)
+
+        # voca에 토큰이 있으면 해당 인덱스값, 없으면 <UNK> 인덱스값
+        indexed_token = [voca[token] if token in voca else voca['<UNK>'] for token in clean_tokens]
+        tensor_token = torch.tensor(indexed_token, dtype=torch.long)
+        tensor_list.append(tensor_token)
+
+    return tensor_list
+
+
+# 텐서 토큰을 패딩해서 텐서화 해주는 함수
+def pad_sequence(tensor_token, max_length, padding_token=0, cut_front=False):
+    # 뒷부분을 자를 경우
+    if cut_front == False:
+        # 토큰 길이가 max_length보다 짧은 경우
+        if len(tensor_token) < max_length:
+            tensor_pad = torch.tensor([padding_token] * (max_length - len(tensor_token)))
+            padded_token = torch.cat((tensor_token, tensor_pad))
+            return padded_token
+        # 토큰 길이가 max_length보다 긴 경우
+        else:
+            return tensor_token[:max_length]
+    elif cut_front == True:
+        # 토큰 길이가 max_length보다 짧은 경우
+        if len(tensor_token) < max_length:
+            tensor_pad = torch.tensor([padding_token] * (max_length - len(tensor_token)))
+            padded_token = torch.cat((tensor_pad, tensor_token))
+            return padded_token
+        else:
+            return tensor_token[(max_length - len(tensor_token)):]
+        
+
+def pad_token_tensor(tensor_token_list):
+    padded_token_list = []
+    for token in tensor_token_list:
+        padded_token_list.append(pad_sequence(token, 10))
+    padded_token_tensor = torch.stack(padded_token_list)
+
+    return padded_token_tensor
+
+
+# 패딩한 텐서 토큰을 데이터셋으로 만들어주는 커스텀 클래스
+class TextDataset(Dataset):
+
+    def __init__(self, padded_token_tensor_texts, labels):
+        self.texts = padded_token_tensor_texts
+        self.labels = labels
+
+    def __len__(self):
+        return len(self.texts)
+
+    def __getitem__(self, idx):
+        tensor_text = self.texts[idx]
+        tensor_label = torch.tensor(self.labels[idx], dtype=torch.float)
+        return tensor_text, tensor_label
+    
+# 자연어 분석 모델
+class SentenceClassifier(nn.Module):
+    def __init__(self, n_vocab, hidden_dim, embedding_dim, n_layers, output_size=1,
+                 dropout=0.5, bidirectional=True, model_type="lstm"):
+        super().__init__()
+
+        # 임베딩 층
+        self.embedding = nn.Embedding(
+            num_embeddings = n_vocab,
+            embedding_dim = embedding_dim,
+            padding_idx=0
+        )
+        
+        # 모델 층 (rnn 또는 lstm)
+        if model_type == 'rnn': # rnn일때
+            self.model = nn.RNN(
+                input_size = embedding_dim,     # 입력 데이터의 차원 (임베딩 차원)
+                hidden_size = hidden_dim,       # 은닉 상태 벡터의 차원 (은닉 노드의 수)
+                num_layers = n_layers,          # rnn 레이어의 개수
+                bidirectional = bidirectional,
+                dropout = dropout,
+                batch_first = True
+            )
+
+        elif model_type == 'lstm': # lstm일때
+            self.model = nn.LSTM(
+                input_size = embedding_dim,     # 입력 데이터의 차원 (임베딩 차원)
+                hidden_size = hidden_dim,       # 은닉 상태 벡터의 차원 (은닉 노드의 수)
+                num_layers = n_layers,          # lstm 레이어의 개수
+                bidirectional = bidirectional,
+                dropout = dropout,
+                batch_first = True
+            )
+
+        # 전결합 층
+        if bidirectional == True:
+            self.fc = nn.Linear(hidden_dim * 2, output_size)
+        else:
+            self.fc = nn.Linear(hidden_dim, output_size)
+        
+        # 드롭아웃 층
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, inputs):
+        embeddings = self.embedding(inputs) # 임베딩 층
+        output, _ = self.model(embeddings) # 모델 층
+        last_output = output[:, -1, :] # 마지막 타임스탭 출력
+        last_output = self.dropout(last_output) # 드롭아웃 층
+        logits = self.fc(last_output)
+        return logits
