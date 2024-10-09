@@ -426,7 +426,7 @@ def remove_stopwords(tokens, stopwords):
 # 구두점 제거 함수
 def remove_punctuation(tokens):
     # match는 문장의 처음부터 매칭돼야 함
-    return [token for token in tokens if re.match(r'[\w가-힇]+', token)]
+    return [token for token in tokens if re.match(r'[a-zA-Z가-힇]+', token)]
 
 # 텍스트를 순차적으로 처리하는 제너레이터
 def text_generator(texts):
@@ -457,14 +457,14 @@ def build_voca(texts, stopwords='stopword.txt', tokenizer=Okt().morphs):
 
 
 # 토큰화한 단어를 숫자 텐서로 만들어주는 함수
-def make_tensor_token(texts, voca, stopwords='stopword.txt'):
+def make_tensor_token(texts, voca, stopwords='stopword.txt', tokenizer=Okt().morphs):
     tensor_list = []
 
     with open(stopwords, 'r', encoding='utf-8') as f:
         stopwords = f.read().splitlines()
 
     for text in text_generator(texts):
-        tokens = Okt().morphs(text)
+        tokens = tokenizer(text)
 
         # 불용어 및 구두점 제거
         clean_tokens = remove_stopwords(tokens, stopwords)
@@ -479,34 +479,28 @@ def make_tensor_token(texts, voca, stopwords='stopword.txt'):
 
 
 # 텐서 토큰을 패딩해서 텐서화 해주는 함수
-def pad_sequence(tensor_token, max_length, padding_token=0, cut_front=False):
-    # 뒷부분을 자를 경우
-    if cut_front == False:
-        # 토큰 길이가 max_length보다 짧은 경우
-        if len(tensor_token) < max_length:
-            tensor_pad = torch.tensor([padding_token] * (max_length - len(tensor_token)))
-            padded_token = torch.cat((tensor_token, tensor_pad))
-            return padded_token
-        # 토큰 길이가 max_length보다 긴 경우
-        else:
-            return tensor_token[:max_length]
-    elif cut_front == True:
-        # 토큰 길이가 max_length보다 짧은 경우
-        if len(tensor_token) < max_length:
-            tensor_pad = torch.tensor([padding_token] * (max_length - len(tensor_token)))
-            padded_token = torch.cat((tensor_pad, tensor_token))
-            return padded_token
-        else:
-            return tensor_token[(max_length - len(tensor_token)):]
-        
-
-def pad_token_tensor(tensor_token_list):
+def pad_token_tensor(tensor_token_list, max_length, cut_front=False, padding_token=0):
     padded_token_list = []
     for token in tensor_token_list:
-        padded_token_list.append(pad_sequence(token, 10))
-    padded_token_tensor = torch.stack(padded_token_list)
-
-    return padded_token_tensor
+        # 토큰이 max_length보다 짧으면
+        if len(token) < max_length:
+            pad_token = torch.tensor([padding_token] * (max_length - len(token)))
+            # 앞부분을 자른다면
+            if cut_front == True:
+                padded_token_list.append(torch.cat((pad_token, token)))
+            # 뒷부분을 자른다면
+            elif cut_front == False:
+                padded_token_list.append(torch.cat((token, pad_token)))
+        # 토큰이 max_length보다 길면
+        else:
+            # 앞부분을 자른다면
+            if cut_front == True:
+                padded_token_list.append(token[(len(token) - max_length):])
+            # 뒷부분을 자른다면
+            elif cut_front == False:
+                padded_token_list.append(token[:max_length])
+    
+    return torch.stack(padded_token_list)
 
 
 # 패딩한 텐서 토큰을 데이터셋으로 만들어주는 커스텀 클래스
