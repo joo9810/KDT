@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form 태그</title>
+</head>
+<body>
+    <h1>사용자 입력 Form 태그</h1>
+    <hr>
+    <!--
+    GET 방식으로 서버에 입력 데이터 전달
+    file:///Users/anhyojun/WorkSpace/KDT2/%E1%84%80%E1%85%B5%E1%86%B7%E1%84%89%E1%85%A9%E1%84%92%E1%85%A7%E1%86%AB%20%E1%84%80%E1%85%A1%E1%86%BC%E1%84%89%E1%85%A1%E1%84%82%E1%85%B5%E1%86%B7/AI_WEB/D1014/ex_form_01.html?msg=%EB%82%A0%EC%94%A8%EA%B0%80+%EC%A2%8B%EB%8B%A4&pass=12345&phone=010-1111-1111&nums=200&url=http%3A%2F%2Fwww.naver.com&email=kkk%40gmail.com
+    -->
+    <form>
+        텍스트 <input type="text" name="msg" value="없음"><br>
+        비밀번호 <input type="password" name="pass" value="없음"><br>
+        전화번호 <input type="tel" name="phone" value="없음"><br>
+        숫자데이터 <input type="number" name="nums" value="0"><br>
+        웹URL <input type="url" name="url" value="0"><br>
+        이메일 <input type="email" name="email" value="0"><br>
+        <input type="submit" value="전송">
+    </form>
+
+    <form>
+        <!--체크박스 : 여러 개 선택-->
+        <strong>프로그래밍 가능한 언어 선택</strong><br>
+        Python <input type="checkbox" name="Python"><br>
+        HTML <input type="checkbox" name="html"><br>
+        My-SQL <input type="checkbox" name="mysql"><br>
+
+        <!--라디오 버튼 : 여러 개 중에서 1개만 선택-->
+        <strong>연령층</strong><br>
+        10대 <input type="radio" name="age" value="10"><br>
+        20대 <input type="radio" name="age" value="20"><br>
+        30대 <input type="radio" name="age" value="30"><br>
+        40대 <input type="radio" name="age" value="40"><br>
+        <input type="submit" value="전송">
+
+        <strong>성별</strong><br>
+        남자 <input type="radio" name="gender" value="m"><br>
+        여자 <input type="radio" name="gender" value="f"><br>
+
+        <!--버튼 태그-->
+        저장하시겠습니까? <input type="button" name="okbtn" value="확인"><br>
+
+        <!--색상 입력 태그-->
+        배경색 : <input type="color" name="bgcolor"><br>
+
+        <!--날짜 요일 입력 태그-->
+        생년월일 : <input type="date" name="birthday"><br>
+
+        <input type="submit" value="전송">
+    </form>
+
+    <form>
+        <!--암묵적/묵시적 방식-->
+        <label>
+            메시지 : <input type="text">
+        </label>
+
+        <!--명시적 방식-->
+        <label for="msg2">메시지2 : </label>
+        <input type="text" id="msg2"><br>
+
+        <!--암묵적/묵시적 + 명시적 방식-->
+        <label for="msg1">
+            메시지 : <input type="text" id="msg1">
+        </label>
+
+        <input type="submit" value="전송">
+    </form>
+</body>
+</html>
