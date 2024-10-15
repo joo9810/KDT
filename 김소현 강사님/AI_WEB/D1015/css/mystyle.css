@@ -1,0 +1,15 @@
+p {
+    background-color:rgba(0, 255, 255, 0.591);
+}
+#secondP {
+    background-color:rgb(52, 182, 76);
+    color:blue;
+    font-weight:bold;
+}
+body {
+    align-content: center;
+    background-image: url("../images/apple.jpg")
+}
+.mon {
+    background-color: hotpink;
+}
