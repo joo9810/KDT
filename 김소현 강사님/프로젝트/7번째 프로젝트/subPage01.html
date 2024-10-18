@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        h1 {
+            text-align: center;
+            background-color:cadetblue;
+            color: white;
+        }
+        h2 {
+            text-align: center;
+        }
+        body {
+            background-color:azure;
+        }
+        iframe.model {
+            float: left;
+        }
+        table {
+            border-collapse: collapse;
+            width: 50%;
+            float: right;
+            font-size:18px;
+        }
+        td, th {
+            border-bottom: 1px solid;
+            border-left: 1px solid;
+            border-right: 1px solid;
+            border-top: 1px solid;
+            text-align: center;
+            padding: 8px;
+        }
+    </style>
+
+    <title>서브페이지1</title>
+</head>
+<body>
+    <h1>
+        <a href="./youtube/youtube.html">
+            <img src="./images/junkome.jpg">
+        </a><br>안효준의 KDT 프로젝트 목록
+        
+    </h1>
+    <iframe src="bar.html" width="100%" height="50" frameborder="0"></iframe>
+
+    <h2>성별 분류 모델</h2><hr>
+    <div style="text-align: center;">
+        <iframe name="model" src="http://127.0.0.1:5001/" width="49%" height="350"></iframe>
+
+        <table>
+            <tr>
+                <th>프로젝트 이름</th>
+                <td>외형 특징에 따른 성별 분류</td>
+            </tr>
+
+            <tr>
+                <th>프로젝트 기간</th>
+                <td>2024.09.05 ~ 2024.09.06</td>
+            </tr>
+
+            <tr>
+                <th>데이터 출처</th>
+                <td>
+                    <a href="https://www.kaggle.com/datasets/elakiricoder/gender-classification-dataset" target="_blank">
+                        캐글 데이터 링크
+                    </a>
+                    
+                </td>
+            </tr>
+
+            <tr>
+                <th>전처리</th>
+                <td>타겟 변수 라벨 인코딩</td>
+            </tr>
+
+            <tr>
+                <th>사용 모델</th>
+                <td>DecisionTreeClassifier</td>
+            </tr>
+
+            <tr>
+                <th>정확도</th>
+                <td>96%</td>
+            </tr>
+
+            <tr>
+                <th style="font-size:17px; padding: 2px 8px;">느낀점</th>
+                <td style="font-size:17px; padding: 2px 8px;">
+                    <ul>
+                        <div>
+                            지금은 비록 간단한 성별 예측을 하는 이진 분류 모델을<br>
+                            만들어보았지만 이러한 생체 인식 기술을 발전시킨다면<br>
+                            cctv를 이용한 범인 특정과 같은 보안 기술에 활용할 수<br>
+                            있을 것으로 기대된다.
+                        </div>
+
+                    </ul>
+                </td>
+            </tr>
+
+        </table>
+    </div>
+    <hr>
+
+    </div>
+
+    <h2>PPT</h2><hr>
+    <div style="text-align: center;">
+        <embed src="./PDF/프로젝트7.pdf" width="1000" height="650" type="application/pdf">
+    </div>
+
+    <iframe src="footer.html" width="100%" height="70" frameborder="0" scrolling="no"></iframe>
+
+</body>
+</html>

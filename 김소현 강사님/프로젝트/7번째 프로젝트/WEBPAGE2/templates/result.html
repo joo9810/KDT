@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>분석 결과</title>
+    <style>
+        body {
+            background-image: url('../static/twitter.jpg'); /* 배경 이미지 동적 설정 */
+            background-size: cover; /* 배경 이미지가 화면을 덮도록 설정 */
+            color: white; /* 텍스트 색상 */
+            text-align: center; /* 텍스트 중앙 정렬 */
+        }
+    </style>
+</head>
+<body>
+    <h1>감정 분석 결과</h1>
+    <p>해당 문장은 {{ predicted_value }}적인 문장입니다.</p> <!-- 예측 결과 출력 -->
+    <a href="{{ url_for('index') }}">다시 분석하기</a> <!-- 다시 업로드 페이지로 이동 -->
+</body>
+</html>
