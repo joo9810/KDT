@@ -258,11 +258,13 @@ def testing(test_DataLoader, model, model_type, num_classes=None,
             if model_type == 'regression': # 회귀일 때
                 loss_test = F.mse_loss(pred_test_y, y_batch)
                 score_test = r2_score(pred_test_y, y_batch)
+
             elif model_type == 'binary': # 이진 분류일 때
                 pred_test_y = torch.sigmoid(pred_test_y) # 확률값 출력
                 loss_test = F.binary_cross_entropy(pred_test_y, y_batch) # 확률값을 전달해야 함
                 pred_test_y = pred_test_y.round() # 확률값을 0또는 1로 변환
                 score_test = f1_score(pred_test_y, y_batch, task='binary') # 0또는 1로 변환된 값을 전달
+
             elif model_type == 'multiclass': # 다중 분류일 때
                 y_batch1D = y_batch.reshape(-1) # 다중 분류는 y가 반드시 1차원이어야 함.. (너무 불친절)
                 loss_test = F.cross_entropy(pred_test_y, y_batch1D.long()) 
@@ -271,6 +273,13 @@ def testing(test_DataLoader, model, model_type, num_classes=None,
                 score_test = f1_score(pred_test_labels, y_batch1D,
                                       task='multiclass', num_classes=num_classes)
                 # 다중 분류는 long타입으로 전달해야 하는듯
+
+            elif model_type == 'multilabel': # 다중 레이블일 때
+                pred_test_y = torch.sigmoid(pred_test_y) # OvR 확률값 출력
+                loss_test = F.binary_cross_entropy(pred_test_y, y_batch) # 확률값을 전달해야 함
+                pred_test_y = (pred_test_y > 0.5).float() # 각 컬럼 마다 0 또는 1의 예측값 출력
+                score_test = f1_score(pred_test_y, y_batch, num_labels=num_classes,
+                                       average='micro', task='multilabel') # 다중 레이블은 micro가 적합
 
             total_loss_test += loss_test.item()
             total_score_test += score_test.item()
@@ -311,11 +320,13 @@ def training(train_DataLoader, test_DataLoader, model, model_type, optimizer,
             if model_type == 'regression': # 회귀일 때
                 loss_train = F.mse_loss(pred_train_y, y_batch)
                 score_train = r2_score(pred_train_y, y_batch)
+
             elif model_type == 'binary': # 이진 분류일 때
                 pred_train_y = torch.sigmoid(pred_train_y) # 확률값 출력
                 loss_train = F.binary_cross_entropy(pred_train_y, y_batch) # 확률값을 전달해야 함
                 pred_train_y = pred_train_y.round() # 확률값을 0또는 1로 변환
                 score_train = f1_score(pred_train_y, y_batch, task='binary') # 0또는 1로 변환된 값을 전달
+
             elif model_type == 'multiclass': # 다중 분류일 때
                 y_batch1D = y_batch.reshape(-1) # 다중 분류는 y가 반드시 1차원이어야 함.. (너무 불친절)
                 loss_train = F.cross_entropy(pred_train_y, y_batch1D.long())
@@ -324,6 +335,13 @@ def training(train_DataLoader, test_DataLoader, model, model_type, optimizer,
                 score_train = f1_score(pred_train_labels, y_batch1D,
                                        task='multiclass', num_classes=num_classes)
                 # 다중 분류는 long타입으로 전달해야 하는듯
+
+            elif model_type == 'multilabel': # 다중 레이블일 때
+                pred_train_y = torch.sigmoid(pred_train_y) # OvR 확률값 출력
+                loss_train = F.binary_cross_entropy(pred_train_y, y_batch) # 확률값을 전달해야 함
+                pred_train_y = (pred_train_y > 0.5).float() # 각 컬럼 마다 0 또는 1의 예측값 출력
+                score_train = f1_score(pred_train_y, y_batch, num_labels=num_classes,
+                                       average='micro', task='multilabel') # 다중 레이블은 micro가 적합
 
             # (3) 최적화
             optimizer.zero_grad() # 그레디언트 초기화
@@ -344,9 +362,11 @@ def training(train_DataLoader, test_DataLoader, model, model_type, optimizer,
             loss_test_avg, score_test_avg = testing(test_DataLoader, model, model_type='binary',
                                                     MPS = MPS, device = device)
         elif model_type == 'multiclass':
-            loss_test_avg, score_test_avg = testing(test_DataLoader, model,
-                                    model_type='multiclass', num_classes=num_classes,
-                                    MPS = MPS, device = device)
+            loss_test_avg, score_test_avg = testing(test_DataLoader, model, model_type='multiclass',
+                                                    num_classes=num_classes, MPS = MPS, device = device)
+        elif model_type == 'multilabel':
+            loss_test_avg, score_test_avg = testing(test_DataLoader, model, model_type='multilabel',
+                                                    MPS = MPS, device = device)
 
         loss_train_history.append(loss_train_avg)
         loss_test_history.append(loss_test_avg)
