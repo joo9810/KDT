@@ -366,7 +366,7 @@ def training(train_DataLoader, test_DataLoader, model, model_type, optimizer,
                                                     num_classes=num_classes, MPS = MPS, device = device)
         elif model_type == 'multilabel':
             loss_test_avg, score_test_avg = testing(test_DataLoader, model, model_type='multilabel',
-                                                    MPS = MPS, device = device)
+                                                    MPS = MPS, num_classes=num_classes, device = device)
 
         loss_train_history.append(loss_train_avg)
         loss_test_history.append(loss_test_avg)
@@ -376,7 +376,10 @@ def training(train_DataLoader, test_DataLoader, model, model_type, optimizer,
         if len(loss_test_history) == 1: # 첫 에포크일때
             best_loss = loss_test_avg
             if SAVE_PATH != None:
-                torch.save(model.state_dict(), f'{SAVE_PATH}/best_model_epoch_{i}.pth')
+                torch.save({
+                    'model_state_dict' : model.state_dict(),
+                     'optimizer_state_dict' : optimizer.state_dict(),
+                      }, f'{SAVE_PATH}/best_model_epoch_{i}.pth')
             print(f"[EPOCH] : {i}에서 모델 저장 완료.")
 
         else:
@@ -384,7 +387,10 @@ def training(train_DataLoader, test_DataLoader, model, model_type, optimizer,
                 best_loss = loss_test_avg
                 EARLY_STOP_LOSS_CNT = 0 # 개선되면 카운트 초기화
                 if SAVE_PATH != None:
-                    torch.save(model.state_dict(), f'{SAVE_PATH}/best_model_epoch_{i}.pth')
+                    torch.save({
+                        'model_state_dict' : model.state_dict(),
+                         'optimizer_state_dict' : optimizer.state_dict(),
+                          }, f'{SAVE_PATH}/best_model_epoch_{i}.pth')
                 print(f"[EPOCH] : {i}에서 모델 저장 완료.")
             else:                         # 손실값이 개선되지 않았다면
                 EARLY_STOP_LOSS_CNT += 1
