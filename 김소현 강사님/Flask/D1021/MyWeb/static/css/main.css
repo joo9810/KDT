@@ -1,0 +1,11 @@
+body {
+    background-color: azure;
+    text-align: center;
+}
+li {
+    text-align: left;
+}
+img {
+    width: 500px;
+    height: 500px;
+}
