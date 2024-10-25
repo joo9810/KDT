@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body style = "text-align: center;">
+    <h1>질문 게시판</h1>
+    <table style="margin-left:auto; margin-right:auto;">
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>날짜</th>
+        </tr>
+        {% if question_list %}
+            {% for question in question_list %}
+        <tr>
+            <td>{{question.id}}</td>
+            <td><a href="/qdetail/{{question.id}}">{{question.subject}}</a></td>
+            <td>{{question.create_date}}</td>
+        </tr>
+            {% endfor %}
+        {% else %}
+        <tr>
+            <td class="msg" colspan="3">등록된 질문이 없습니다.</td>
+        </tr>
+        {% endif %}
+    </table>
+
+    <br>
+
+
+    <a href="/">메인 페이지 이동</a>
+</body>
+</html>

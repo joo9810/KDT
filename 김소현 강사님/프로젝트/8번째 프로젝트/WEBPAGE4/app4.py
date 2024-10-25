@@ -57,12 +57,12 @@ def result_hobby():
     best_model = LSTMModel(input_size = 5000, output_size = 8, hidden_list = [100, 30],
                         act_func=F.relu, model_type='multiclass', num_layers=1)
     # 본인 pth 경로로 바꾸기
-    pth_PATH = '/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/6번째 프로젝트/best_model_tf-idf_0.8203.pth'
+    pth_PATH = '/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/8번째 프로젝트/WEBPAGE4/best_model_tf-idf_0.8203.pth'
     best_model.load_state_dict(torch.load(pth_PATH, weights_only=True))
 
     best_model.eval()
     # 본인 pkl 경로로 바꾸기
-    pkl_PATH = '/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/6번째 프로젝트/WEBPAGE/tfid_vectorizer_5000.pkl'
+    pkl_PATH = '/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/8번째 프로젝트/WEBPAGE4/tfid_vectorizer_5000.pkl'
     loaded_vectorizer = joblib.load(pkl_PATH)
     input_vector = loaded_vectorizer.transform(inputDF['clean_text'].values)
     input_tensor_vector = torch.FloatTensor(input_vector.toarray())
@@ -121,12 +121,12 @@ class TextClassificationModel(nn.Module):
         return x
     
 def predict_label(new_sentence):
-    model = TextClassificationModel(input_size=joblib.load('/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/6번째 프로젝트/WEBPAGE/vectorizerkimms.pkl').vocabulary_.__len__(), num_classes=9)
-    model.load_state_dict(torch.load('/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/6번째 프로젝트/best_modelkimms.pth'))
+    model = TextClassificationModel(input_size=joblib.load('/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/8번째 프로젝트/WEBPAGE4/vectorizerkimms.pkl').vocabulary_.__len__(), num_classes=9)
+    model.load_state_dict(torch.load('/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/8번째 프로젝트/best_modelkimms.pth'))
     model.eval()
 
-    vectorizer = joblib.load('/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/6번째 프로젝트/WEBPAGE/vectorizerkimms.pkl')
-    label_encoder = joblib.load('/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/6번째 프로젝트/label_encoderkimms.pkl')
+    vectorizer = joblib.load('/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/8번째 프로젝트/WEBPAGE4/vectorizerkimms.pkl')
+    label_encoder = joblib.load('/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/8번째 프로젝트/WEBPAGE4/label_encoderkimms.pkl')
 
     cleaned_sentence = remove_special_characters(new_sentence)
     sentence_vector = vectorizer.transform([cleaned_sentence]).toarray()
@@ -204,9 +204,9 @@ category_map1 = {
 }
 
 
-model_path1 = os.path.join(os.path.dirname(__file__),'/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/6번째 프로젝트/bestmodel.pth')
-token_to_id_path1 = os.path.join(os.path.dirname(__file__),'/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/6번째 프로젝트/token_to_id.joblib')
-label_encoder_path1 = os.path.join(os.path.dirname(__file__),'/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/6번째 프로젝트/label_encoder.joblib')
+model_path1 = os.path.join(os.path.dirname(__file__),'/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/8번째 프로젝트/WEBPAGE4/bestmodel.pth')
+token_to_id_path1 = os.path.join(os.path.dirname(__file__),'/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/8번째 프로젝트/WEBPAGE4/token_to_id.joblib')
+label_encoder_path1 = os.path.join(os.path.dirname(__file__),'/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/8번째 프로젝트/WEBPAGE4/label_encoder.joblib')
 
 # 디바이스 설정
 device1 = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -279,9 +279,9 @@ class TextClassifier(nn.Module):
 def text_to_sequence(text, vocab):
     return [vocab.get(word, vocab['<UNK>']) for word in text.split()]
 
-MODEL_PATH = os.path.join(os.path.dirname(__file__), '/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/6번째 프로젝트/WEBPAGE/text_classification_model.pth')
-VOCAB_PATH = os.path.join(os.path.dirname(__file__), '/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/6번째 프로젝트/WEBPAGE/vocab.pkl')
-LABEL_ENCODER_PATH = os.path.join(os.path.dirname(__file__), '/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/6번째 프로젝트/WEBPAGE/label_encoder.pkl')
+MODEL_PATH = os.path.join(os.path.dirname(__file__), '/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/8번째 프로젝트/WEBPAGE4/text_classification_model.pth')
+VOCAB_PATH = os.path.join(os.path.dirname(__file__), '/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/8번째 프로젝트/WEBPAGE4/vocab.pkl')
+LABEL_ENCODER_PATH = os.path.join(os.path.dirname(__file__), '/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/8번째 프로젝트/WEBPAGE4/label_encoder.pkl')
 
 with open(VOCAB_PATH, 'rb') as f:
     vocab = pickle.load(f)

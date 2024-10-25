@@ -12,7 +12,7 @@ from KDTModule import *
 app = Flask(__name__)
 
 # 업로드할 이미지 저장 경로
-UPLOAD_FOLDER = '/Users/anhyojun/WorkSpace/KDT/김소현 강사님/프로젝트/5번째 프로젝트/WEBPAGE/uploads'
+UPLOAD_FOLDER = '/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/8번째 프로젝트/WEBPAGE3/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # 업로드 폴더가 없으면 생성
@@ -35,7 +35,7 @@ def upload_file():
 
         best_model = models.resnet50(weights=ResNet50_Weights.IMAGENET1K_V1) # resnet50 모델 불러오기
         best_model.fc = nn.Linear(best_model.fc.in_features, 5) # 전결합층 입력 출력 변경
-        pth_PATH = '/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/7번째 프로젝트/WEBPAGE3/best_model_epoch_41.pth'
+        pth_PATH = '/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/8번째 프로젝트/WEBPAGE3/best_model_epoch_41.pth'
         best_model.load_state_dict(torch.load(pth_PATH, weights_only=True)) # 모델에 가중치 설정
 
         transform = transforms.Compose([

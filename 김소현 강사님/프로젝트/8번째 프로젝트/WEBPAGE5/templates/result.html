@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>분석 결과</title>
+    <style>
+        body {
+            background-image: url('../static/movie.jpg'); /* 배경 이미지 동적 설정 */
+            background-size: cover; /* 배경 이미지가 화면을 덮도록 설정 */
+            color: white; /* 텍스트 색상 */
+            text-align: center; /* 텍스트 중앙 정렬 */
+            position: absolute;
+            left: 15%;
+            top: 20%;
+        }
+    </style>
+</head>
+<body>
+    <h1>등급 분석 결과</h1>
+    <p>해당 영화의 상영 등급은 {{ predicted_value }}입니다.</p> <!-- 예측 결과 출력 -->
+    <a href="{{ url_for('index') }}">다시 분석하기</a> <!-- 다시 업로드 페이지로 이동 -->
+</body>
+</html>

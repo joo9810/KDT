@@ -55,13 +55,13 @@ def upload():
         'distance_nose_to_lip_long' : [distance_nose_to_lip_long]
     })
 
-    mm_scaler = joblib.load('/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/7번째 프로젝트/WEBPAGE1/MinMaxScaler.joblib')
+    mm_scaler = joblib.load('/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/8번째 프로젝트/WEBPAGE1/MinMaxScaler.joblib')
 
     input_data_scaled = mm_scaler.transform(input_data[['forehead_width_cm', 'forehead_height_cm']])
     input_data[['forehead_width_cm', 'forehead_height_cm']] = input_data_scaled
 
     # 모델 불러오기
-    dt = joblib.load('/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/7번째 프로젝트/WEBPAGE1/DecisionTree.joblib')
+    dt = joblib.load('/Users/anhyojun/WorkSpace/KDT2/김소현 강사님/프로젝트/8번째 프로젝트/WEBPAGE1/DecisionTree.joblib')
     predicted_value = dt.predict(input_data)
 
     if predicted_value == 0:

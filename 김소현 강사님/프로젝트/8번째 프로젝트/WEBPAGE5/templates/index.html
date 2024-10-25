@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>영화 상영 등급 분류</title>
+    <style>
+        body {
+            background-image: url('../static/movie.jpg');
+            background-size: cover; /* 배경 이미지가 화면을 덮도록 설정 */
+            color: white;
+            text-align: center;
+            position: absolute;
+            left: 15%;
+            top: 20%;
+        }
+        textarea {
+            width: 400px;
+            height: 150px;
+        }
+    </style>
+</head>
+<body>
+    <h1>영화 상영 등급 분류</h1>
+    <form action="/upload" method="post">
+        <textarea name="tweet" placeholder="영화 줄거리/스토리를 입력하세요"></textarea><br>
+        <input type="submit" value="분석하기">
+    </form>
+    
+</body>
+</html>
