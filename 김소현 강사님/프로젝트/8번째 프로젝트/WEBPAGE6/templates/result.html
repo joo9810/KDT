@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예측 결과</title>
+    <style>
+        body {
+            background-image: url('../static/movie.jpg'); /* 배경 이미지 동적 설정 */
+            background-size: cover; /* 배경 이미지가 화면을 덮도록 설정 */
+            color: black; /* 텍스트 색상 */
+            text-align: center; /* 텍스트 중앙 정렬 */
+            margin-top: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>예측 결과</h1>
+    <h2>해당 영화의 장르는 {{ pred_answer }}입니다.</h2> <!-- 예측 결과 출력 -->
+    <a href="{{ url_for('index') }}">다시 업로드하기</a> <!-- 다시 업로드 페이지로 이동 -->
+</body>
+</html>

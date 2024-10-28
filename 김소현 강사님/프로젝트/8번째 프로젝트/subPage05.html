@@ -31,7 +31,7 @@
         }
     </style>
 
-    <title>서브페이지4</title>
+    <title>서브페이지5</title>
 </head>
 <body>
     <h1>
@@ -42,7 +42,7 @@
     </h1>
     <iframe src="bar.html" width="100%" height="50" frameborder="0"></iframe>
 
-    <h2 style="text-align:center;">네이버 주제 분류 모델</h2><hr>
+    <h2 style="text-align:center;">영화 시놉시스 기반 상영 등급 분류 모델</h2><hr>
     <div style="text-align: center;">
         <iframe name="model" src="http://127.0.0.1:5006/" width= "49%" height="350"></iframe>
         <table>
@@ -63,25 +63,25 @@
 
             <tr>
                 <th>전처리</th>
-                <td>이미지 224 x 224 사이즈로 변환 및 이미지넷 정규화</td>
+                <td>불용어 및 구두점 제거, TF-IDF 벡터화</td>
             </tr>
 
             <tr>
                 <th>사용 모델</th>
-                <td>EfficientNet_V2_L</td>
+                <td>GRU</td>
             </tr>
 
             <tr>
                 <th>정확도</th>
-                <td></td>
+                <td>0.80</td>
             </tr>
 
             <tr>
                 <th>느낀점</th>
                 <td>
                     <ul>
-                        <li></li>
-                        <li></li>
+                        <li>크롤링 한 데이터를 꼼꼼하게 봐야겠다</li>
+                        <li>상영 등급 간의 경계가 명확하지 않은 것 같다</li>
                         <li></li>
                     </ul>
                 </td>
