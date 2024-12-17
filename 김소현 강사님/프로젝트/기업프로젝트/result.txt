@@ -1,0 +1,115 @@
+1번 결과:
+lr = 1e-5, weight_decay = 0.001, optimizer = AdamW
+accuracy : 0.9384513567174056
+f1_score : 0.938617171941805
+mse : 0.5334215751158173
+
+
+2번 결과:
+lr = 1e-5, weight_decay = 0.01, optimizer = AdamW
+accuracy : 0.9404367968232958
+f1_score : 0.9406073653876782
+mse : 0.49503639973527463
+
+
+3번 결과:
+lr = 1e-5, weight_decay = 0.001, optimizer = SGD
+accuracy : 0.15155526141628062
+f1_score : 0.16159207690801589
+mse : 8.803441429516877
+
+
+4번 결과:
+lr = 1e-5, weight_decay = 0.01, optimizer = SGD
+accuracy : 0.23097286565188616
+f1_score : 0.21655203285177418
+mse : 7.738583719391132
+
+
+5번 결과:
+lr = 1e-4, weight_decay = 0.001, optimizer = AdamW
+accuracy : 0.9305095962938451
+f1_score : 0.9305210937661124
+mse : 0.5883520847121112
+
+
+6번 결과:
+lr = 1e-4, weight_decay = 0.01, optimizer = AdamW
+accuracy : 0.8967571144937128
+f1_score : 0.8970787664754126
+mse : 1.0311052283256121
+
+
+7번 결과:
+lr = 1e-4, weight_decay = 0.001, optimizer = SGD
+accuracy : 0.35208471211118464
+f1_score : 0.2800402954580079
+mse : 8.204500330906685
+
+
+8번 결과:
+lr = 1e-4, weight_decay = 0.01, optimizer = SGD
+accuracy : 0.35208471211118464
+f1_score : 0.2800402954580079
+mse : 8.204500330906685
+
+
+9번 결과:
+lr = 1e-3, weight_decay = 0.001, optimizer = AdamW
+accuracy : 0.2673726009265387
+f1_score : 0.1128130869705709
+mse : 10.14626075446724
+
+
+10번 결과:
+lr = 1e-3, weight_decay = 0.01, optimizer = AdamW
+accuracy : 0.2673726009265387
+f1_score : 0.1128130869705709
+mse : 10.14626075446724
+
+
+11번 결과:
+lr = 1e-3, weight_decay = 0.001, optimizer = SGD
+accuracy : 0.8775645268034414
+f1_score : 0.8772444240886543
+mse : 1.229649238914626
+
+
+12번 결과:
+lr = 1e-3, weight_decay = 0.01, optimizer = SGD
+accuracy : 0.8815354070152217
+f1_score : 0.8812463295263095
+mse : 1.1760423560555924
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
